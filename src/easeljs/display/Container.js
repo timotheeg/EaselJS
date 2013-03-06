@@ -96,8 +96,7 @@ var p = Container.prototype = new createjs.DisplayObject();
 	 * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
 	 **/
 	p.isVisible = function() {
-		var hasContent = this.cacheCanvas || this.children.length;
-		return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
+		return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && (this.cacheCanvas || this.children.length));
 	}
 
 	/**
@@ -197,7 +196,7 @@ var p = Container.prototype = new createjs.DisplayObject();
 		var l = arguments.length;
 		if (l > 1) {
 			var good = true;
-			for (var i=0; i<l; i++) { good = good && this.removeChild(arguments[i]); }
+			for (var i=l; i-->0; ) { good = good && this.removeChild(arguments[i]); }
 			return good;
 		}
 		return this.removeChildAt(this.children.indexOf(child));
@@ -214,10 +213,10 @@ var p = Container.prototype = new createjs.DisplayObject();
 		var l = arguments.length;
 		if (l > 1) {
 			var a = [];
-			for (var i=0; i<l; i++) { a[i] = arguments[i]; }
-			a.sort(function(a, b) { return b-a; });
+			for (var i=l; i-->0; ) { a[i] = arguments[i]; }
+			a.sort();
 			var good = true;
-			for (var i=0; i<l; i++) { good = good && this.removeChildAt(a[i]); }
+			for (var i=l; i-->0; ) { good = good && this.removeChildAt(a[i]); }
 			return good;
 		}
 		if (index < 0 || index > this.children.length-1) { return false; }
@@ -233,7 +232,10 @@ var p = Container.prototype = new createjs.DisplayObject();
 	 **/
 	p.removeAllChildren = function() {
 		var kids = this.children;
-		while (kids.length) { kids.pop().parent = null; }
+		for (var i=kids.length; i-->0;) {
+			kids[i].parent = null;
+		}
+		this.children = [];
 	}
 
 	/**
@@ -254,7 +256,7 @@ var p = Container.prototype = new createjs.DisplayObject();
 	 **/
 	p.getChildByName = function(name) {
 		var kids = this.children;
-		for (var i=0,l=kids.length;i<l;i++) {
+		for (var i=kids.length; i-->0;) {
 			if(kids[i].name == name) { return kids[i]; }
 		}
 		return null;
